@@ -1,4 +1,5 @@
 require 'open-uri'
+require 'open_uri_redirections'
 
 module CarrierWave
   module Uploader
@@ -36,10 +37,11 @@ module CarrierWave
 
         def file
           if @file.blank?
+
             headers = @remote_headers.
               reverse_merge('User-Agent' => "CarrierWave/#{CarrierWave::VERSION}")
 
-            @file = Kernel.open(@uri.to_s, headers)
+            @file = Kernel.open(@uri.to_s, headers.merge({allow_redirections: :safe}))
             @file = @file.is_a?(String) ? StringIO.new(@file) : @file
           end
           @file
