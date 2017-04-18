@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 require 'open-uri'
+require 'open_uri_redirections'
 
 module CarrierWave
   module Uploader
@@ -37,7 +38,8 @@ module CarrierWave
 
         def file
           if @file.blank?
-            @file = Kernel.open(@uri.to_s)
+            # allow http -> https redirections
+            @file = Kernel.open(@uri.to_s, allow_redirections: :safe)
             @file = @file.is_a?(String) ? StringIO.new(@file) : @file
           end
           @file
